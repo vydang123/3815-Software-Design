@@ -1,14 +1,17 @@
 import pygame, sys
 from button import Button
+from copy import deepcopy
 
 pygame.init()
 
+
 SCREEN = pygame.display.set_mode((1280, 720))
+
 pygame.display.set_caption("Menu")
 
 button_surface = pygame.image.load("button.png")
 button_surface = pygame.transform.scale(button_surface, (500, 100))
-def get_font(size): # Returns Press-Start-2P in the desired size
+def get_font(size):
     return pygame.font.SysFont("cambria", size)
 
 def start_up():
@@ -52,9 +55,6 @@ def start_up():
                     sys.exit()
 
         pygame.display.update()
-
-
-
 
 def configure_page():
     pygame.display.set_caption("Configure")
@@ -106,27 +106,57 @@ def score_page():
         pygame.display.update()
 def play():
     pygame.display.set_caption("Play")
+    clock = pygame.time.Clock()
+    W, H = 10, 17
+    TILE = 40
+    GAME_RES = W*TILE, H*TILE
+    FPS = 60
+    game_sc = pygame.display.set_mode(GAME_RES)
+    grid = [pygame.Rect(x*TILE, y*TILE, TILE, TILE) for x in range(W) for y in range(H)]
+    figure_pos = [[(-1, 0), (-2, 0), (0, 0), (1, 0)],
+                  [(0, -1), (-1, -1), (0, 0), (-1, 0)],
+                  [(0, 0), (1, 0), (0, -1), (-1, -1)],
+                  [(0, 0), (-1, 0), (0, -1), (1, -1)],
+                  [(-1, 0), (0, 0), (-1, -1), (-1, -2)],
+                  [(0, 0), (-1, 0), (0, -1), (0, -2)],
+                  [(0, 0), (-1, 0), (1, 0), (0, -1)]]
+    figures = [[pygame.Rect(x + W // 2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos in figure_pos]
+    figure_rect = pygame.Rect(0, 0, TILE - 2, TILE - 2)
+
+    figure = deepcopy(figures[0])
+
+    def check_borders():
+        if figure[i].x < 0 or figure[i].x > W -1:
+            return False
+        return True
     while True:
-        PLAY_MOUSE_POS = pygame.mouse.get_pos()
-        SCREEN.fill("black")
-
-        PLAY_TEXT = get_font(45).render("This is the Play Screen.", True, "White")
-        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
-        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
-
-        PLAY_BACK = Button(image=None, pos=(640, 460), text_input="BACK", font=get_font(75), base_color="White",
-                           hovering_color="Green")
-
-        PLAY_BACK.changeColor(PLAY_MOUSE_POS)
-        PLAY_BACK.update(SCREEN)
-
+        dx = 0
+        game_sc.fill("black")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
-                    start_up()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    dx = -1
+                elif event.key == pygame.K_RIGHT:
+                    dx = 1
+
+        figure_old = deepcopy(figure)
+        for i in range(4):
+            figure[i].x += dx
+            if not check_borders():
+                figure = deepcopy(figure_old)
+                break
+
+
+        [pygame.draw.rect(game_sc, (40, 40, 40), i_rect, 1) for i_rect in grid]
+
+        for i in range(4):
+            figure_rect.x = figure[i].x * TILE
+            figure_rect.x = figure[i].x * TILE
+            pygame.draw.rect(game_sc, pygame.Color("White"), figure_rect)
         pygame.display.update()
+        clock.tick(FPS)
 
 start_up()
