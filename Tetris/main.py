@@ -117,6 +117,8 @@ def play():
     sc = pygame.display.set_mode(RES)
     game_sc = pygame.Surface(GAME_RES)
     grid = [pygame.Rect(x*TILE, y*TILE, TILE, TILE) for x in range(W) for y in range(H)]
+
+    #figures
     figures_pos = [[(-1, 0), (-2, 0), (0, 0), (1, 0)],
                   [(0, -1), (-1, -1), (0, 0), (-1, 0)],
                   [(0, 0), (1, 0), (0, -1), (-1, -1)],
@@ -128,11 +130,13 @@ def play():
     figure_rect = pygame.Rect(0, 0, TILE - 2, TILE - 2)
     field = [[0 for i in range(W)] for j in range(H)]
 
+    #speed elements
     anim_count, anim_speed, anim_limit = 0, 60, 2000
     figure, next_figure = deepcopy(choice(figures)), deepcopy(choice(figures))
 
     bg = pygame.image.load('bg.jpg').convert()
 
+    #titles
     title_tetris = get_font(80).render("Tetris", True, pygame.Color("darkorange"))
     next_block = get_font(50).render("Next Block", True, pygame.Color("darkorange"))
     title_score = get_font(60).render('Score', True, pygame.Color('green'))
@@ -144,8 +148,11 @@ def play():
     figure, next_figure = deepcopy(choice(figures)), deepcopy(choice(figures))
     color, next_color = get_color(), get_color()
 
+    #score
     score, lines = 0, 0
     scores = {0: 0, 1: 100, 2: 300, 3: 700, 4: 1500}
+
+    line_count = 0
 
     def check_borders():
         if figure[i].x < 0 or figure[i].x > W - 1:
@@ -220,7 +227,8 @@ def play():
                     break
 
         #check lines
-        line, lines = H - 1, 0
+        line = H - 1
+        lines = 0
         for row in range(H - 1, -1, -1):
             count = 0
             for i in range(W):
@@ -232,12 +240,15 @@ def play():
             else:
                 anim_speed += 3
                 lines += 1
+                line_count +=1
 
         #compute score
         score += scores[lines]
+
+        #grid
         [pygame.draw.rect(game_sc, (40, 40, 40), i_rect, 1) for i_rect in grid]
 
-        #figures
+        #display figures
         for i in range(4):
             figure_rect.x = figure[i].x * TILE
             figure_rect.y = figure[i].y * TILE
@@ -256,11 +267,14 @@ def play():
             figure_rect.y = next_figure[i].y * TILE + 220
             pygame.draw.rect(sc, next_color, figure_rect)
 
-        #titles
+        #titles display
         sc.blit(title_tetris, (495, 20))
         sc.blit(next_block, (470, 130))
         sc.blit(title_score, (535, 600))
         sc.blit(get_font(45).render(str(score), True, pygame.Color('white')), (570, 660))
+        lines_eliminated_text = get_font(40).render("Lines Eliminated", True, pygame.Color('Purple'))
+        sc.blit(lines_eliminated_text, (450, 330))
+        sc.blit(get_font(45).render(str(line_count), True, pygame.Color('white')), (570, 380))
 
         #game over
         game_is_over = False
