@@ -17,6 +17,7 @@ def get_font(size):
 
 def start_up():
     pygame.display.set_caption("Menu")
+    SCREEN = pygame.display.set_mode((1280, 720))
     while True:
         SCREEN.fill("black")
 
@@ -133,10 +134,18 @@ def play():
     bg = pygame.image.load('bg.jpg').convert()
 
     title_tetris = get_font(80).render("Tetris", True, pygame.Color("darkorange"))
+    next_block = get_font(50).render("Next Block", True, pygame.Color("darkorange"))
+    title_score = get_font(60).render('Score', True, pygame.Color('green'))
+    game_over = get_font(80).render("Game Over", True, pygame.Color("darkorange"))
+
+
     get_color = lambda : (randrange(30, 256), randrange(30, 256), randrange(30, 256))
 
     figure, next_figure = deepcopy(choice(figures)), deepcopy(choice(figures))
     color, next_color = get_color(), get_color()
+
+    score, lines = 0, 0
+    scores = {0: 0, 1: 100, 2: 300, 3: 700, 4: 1500}
 
     def check_borders():
         if figure[i].x < 0 or figure[i].x > W - 1:
@@ -150,6 +159,12 @@ def play():
         rotate = False
         sc.blit(game_sc, (20, 20))
         game_sc.fill("black")
+
+        #delay for full lines
+        for i in range(lines):
+            pygame.time.wait(200)
+
+        #control
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -204,8 +219,8 @@ def play():
                     figure = deepcopy(figure_old)
                     break
 
-        #check last line
-        line = H - 1
+        #check lines
+        line, lines = H - 1, 0
         for row in range(H - 1, -1, -1):
             count = 0
             for i in range(W):
@@ -214,6 +229,12 @@ def play():
                 field[line][i] = field[row][i]
             if count < W:
                 line -= 1
+            else:
+                anim_speed += 3
+                lines += 1
+
+        #compute score
+        score += scores[lines]
         [pygame.draw.rect(game_sc, (40, 40, 40), i_rect, 1) for i_rect in grid]
 
         #figures
@@ -229,9 +250,31 @@ def play():
                     figure_rect.x, figure_rect.y = x * TILE, y * TILE
                     pygame.draw.rect(game_sc, col, figure_rect)
 
-        
+        #next figure
+        for i in range(4):
+            figure_rect.x = next_figure[i].x * TILE + 383
+            figure_rect.y = next_figure[i].y * TILE + 220
+            pygame.draw.rect(sc, next_color, figure_rect)
+
+        #titles
+        sc.blit(title_tetris, (495, 20))
+        sc.blit(next_block, (470, 130))
+        sc.blit(title_score, (535, 600))
+        sc.blit(get_font(45).render(str(score), True, pygame.Color('white')), (570, 660))
+
+        #game over
+        game_is_over = False
+        for i in range(W):
+            if field[0][i]:
+                game_is_over = True
+                break
+        if game_is_over:
+            sc.blit(game_over, (40, 330))
+            pygame.display.update()
+            pygame.time.wait(2000)  # Display the "Game Over" text for 2 seconds
+            start_up()  # Return to the main menu
 
         pygame.display.update()
         clock.tick(FPS)
 
-play()
+start_up()
