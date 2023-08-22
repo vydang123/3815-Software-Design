@@ -2,6 +2,7 @@ import pygame, sys
 from button import Button
 from copy import deepcopy
 from random import choice, randrange
+from pgu import gui
 
 pygame.init()
 
@@ -12,6 +13,8 @@ pygame.display.set_caption("Menu")
 
 button_surface = pygame.image.load("button.png")
 button_surface = pygame.transform.scale(button_surface, (500, 100))
+score_screen = pygame.display.set_mode((680, 680))
+
 def get_font(size):
     return pygame.font.SysFont("cambria", size)
 
@@ -25,17 +28,23 @@ def start_up():
 
         MENU_TEXT = get_font(120).render("TETRIS", True, "White")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
+        MENU_TEXT_YCC = get_font(50).render("Year: 2023    Course Code: 3815ICT", True, "White")
+        MENU_RECT_YCC = MENU_TEXT_YCC.get_rect(center=(640, 190))
+        GROUP_NUMNAME = get_font(50).render("Group: Vy Dang - s5245519", True, "White")
+        GROUP_RECT_NUMNAME = GROUP_NUMNAME.get_rect(center=(640, 250))
 
-        PLAY_BUTTON = Button(button_surface, pos=(640, 300), text_input="PLAY", font=get_font(60), base_color="White",
+        PLAY_BUTTON = Button(button_surface, pos=(640, 350), text_input="PLAY", font=get_font(60), base_color="White",
                              hovering_color="Green")
-        CONFIGURE_BUTTON = Button(button_surface, pos=(640, 400), text_input="CONFIGURE", font=get_font(60), base_color="White",
+        CONFIGURE_BUTTON = Button(button_surface, pos=(640, 450), text_input="CONFIGURE", font=get_font(60), base_color="White",
                              hovering_color="Green")
-        SCORE_BUTTON = Button(button_surface, pos=(640, 500), text_input="SCORE", font=get_font(60), base_color="White",
+        SCORE_BUTTON = Button(button_surface, pos=(640, 550), text_input="SCORE", font=get_font(60), base_color="White",
                              hovering_color="Green")
-        EXIT_BUTTON = Button(button_surface, pos=(640, 600), text_input="EXIT", font=get_font(60), base_color="White",
+        EXIT_BUTTON = Button(button_surface, pos=(640, 650), text_input="EXIT", font=get_font(60), base_color="White",
                              hovering_color="Green")
 
-        SCREEN.blit(MENU_TEXT, MENU_RECT)
+        SCREEN.blit(MENU_TEXT, MENU_RECT,)
+        SCREEN.blit(MENU_TEXT_YCC, MENU_RECT_YCC)
+        SCREEN.blit(GROUP_NUMNAME, GROUP_RECT_NUMNAME)
 
         for button in [PLAY_BUTTON, CONFIGURE_BUTTON, SCORE_BUTTON, EXIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
@@ -64,11 +73,27 @@ def configure_page():
         CON_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
-        CON_TEXT = get_font(45).render("This is the Configure Page.", True, "White")
-        CON_RECT = CON_TEXT.get_rect(center=(640, 260))
+        CON_TEXT = get_font(60).render("Configure", True, "White")
+        CON_RECT = CON_TEXT.get_rect(center=(640, 90))
         SCREEN.blit(CON_TEXT, CON_RECT)
 
-        CON_BACK = Button(image=None, pos=(640, 460), text_input="BACK", font=get_font(75), base_color="White",
+        FIELD_SIZE = get_font(30).render("Size of filed: 10 x 17", True, "White")
+        FIELD_SIZE_RECT = FIELD_SIZE.get_rect(center=(640, 190))
+        SCREEN.blit(FIELD_SIZE, FIELD_SIZE_RECT)
+
+        GAME_LEVEL = get_font(30).render("Game Level: 1", True, "White")
+        GAME_LEVEL_RECT = GAME_LEVEL.get_rect(center=(640, 290))
+        SCREEN.blit(GAME_LEVEL, GAME_LEVEL_RECT)
+
+        GAME_MODE = get_font(30).render("Game Mode: Normal", True, "White")
+        GAME_MODE_RECT = GAME_MODE.get_rect(center=(640, 390))
+        SCREEN.blit(GAME_MODE, GAME_MODE_RECT)
+
+        PLAYER_MODE = get_font(30).render("Player Mode: Normal Player", True, "White")
+        PLAYER_MODE_RECT = PLAYER_MODE.get_rect(center=(640, 490))
+        SCREEN.blit(PLAYER_MODE, PLAYER_MODE_RECT)
+
+        CON_BACK = Button(button_surface, pos=(640, 590), text_input="OK", font=get_font(40), base_color="White",
                            hovering_color="Green")
 
         CON_BACK.changeColor(CON_MOUSE_POS)
@@ -83,20 +108,41 @@ def configure_page():
                     start_up()
         pygame.display.update()
 def score_page():
-    pygame.display.set_caption("Play")
+    SCREEN = pygame.display.set_mode((1280, 720))
+    score_screen = pygame.Surface((640, 680))
+    pygame.display.set_caption("Score")
+    top_scores = [
+        ("Player 1", 1000),
+        ("Player 2", 850),
+        ("Player 3", 700),
+        ("Player 4", 600),
+        ("Player 5", 500),
+        ("Player 6", 400),
+        ("Player 7", 300),
+        ("Player 8", 200),
+        ("Player 9", 100),
+        ("Player 10", 50),
+    ]
     while True:
         SCORE_MOUSE_POS = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
-        SCORE_TEXT = get_font(45).render("This is the Score Screen.", True, "White")
-        SCORE_RECT = SCORE_TEXT.get_rect(center=(640, 260))
+
+        SCORE_TEXT = get_font(45).render("Top Score", True, "White")
+        SCORE_RECT = SCORE_TEXT.get_rect(center=(640, 90))
         SCREEN.blit(SCORE_TEXT, SCORE_RECT)
 
-        SCORE_BACK = Button(image=None, pos=(640, 460), text_input="BACK", font=get_font(75), base_color="White",
+        SCORE_BACK = Button(button_surface, pos=(640, 660), text_input="OK", font=get_font(40), base_color="White",
                            hovering_color="Green")
 
         SCORE_BACK.changeColor(SCORE_MOUSE_POS)
         SCORE_BACK.update(SCREEN)
+
+        for idx, (player, score) in enumerate(top_scores):
+            score_text = f"{idx + 1}. {player}: {score}"
+            score_rendered = get_font(30).render(score_text, True, "White")
+            score_rect = score_rendered.get_rect(center=((640, 190 + idx * 40)))
+            SCREEN.blit(score_rendered, score_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -116,6 +162,7 @@ def play():
     FPS = 60
     sc = pygame.display.set_mode(RES)
     game_sc = pygame.Surface(GAME_RES)
+
     grid = [pygame.Rect(x*TILE, y*TILE, TILE, TILE) for x in range(W) for y in range(H)]
 
     #figures
@@ -154,6 +201,19 @@ def play():
 
     line_count = 0
 
+    #esc pop-up
+    esc_dialog = pygame.Surface((400, 400))
+    esc_dialog.fill("grey")
+    show_escape_dialog = False
+    def return_to_menu():
+        nonlocal show_escape_dialog
+        show_escape_dialog = False
+        start_up()
+
+    def continue_playing():
+        nonlocal show_escape_dialog
+        show_escape_dialog = False
+
     def check_borders():
         if figure[i].x < 0 or figure[i].x > W - 1:
             return False
@@ -189,6 +249,38 @@ def play():
                 #rotate
                 elif event.key == pygame.K_UP:
                     rotate = True
+                elif event.key == pygame.K_ESCAPE:
+                    show_escape_dialog = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if show_escape_dialog:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if yes_button.checkForInput(mouse_pos):
+                        return_to_menu()
+                    elif no_button.checkForInput(mouse_pos):
+                        continue_playing()
+
+        #escape game or not
+        if show_escape_dialog:
+            sc.blit(esc_dialog, (175, 160))
+            # Create "YES" and "NO" buttons
+            yes_button = Button(image=None, pos=(280, 450), text_input="YES", font=get_font(40), base_color="White",
+                           hovering_color="Green")
+            no_button = Button(image=None, pos=(480, 450), text_input="NO", font=get_font(40), base_color="White",
+                           hovering_color="Green")
+
+            # Display the dialog text
+            dialog_text = get_font(27).render("Would you like to end the game?", True, pygame.Color('white'))
+            esc_dialog.blit(dialog_text, (20, 80))
+
+            # Update and draw buttons
+            yes_button.changeColor(pygame.mouse.get_pos())
+            yes_button.update(sc)
+            no_button.changeColor(pygame.mouse.get_pos())
+            no_button.update(sc)
+
+            pygame.display.update()
+            continue
+
 
         #move blocks right or left
         figure_old = deepcopy(figure)
@@ -291,4 +383,6 @@ def play():
         pygame.display.update()
         clock.tick(FPS)
 
+
 start_up()
+
