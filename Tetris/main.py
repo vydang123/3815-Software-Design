@@ -30,7 +30,7 @@ def start_up():
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
         MENU_TEXT_YCC = get_font(50).render("Year: 2023    Course Code: 3815ICT", True, "White")
         MENU_RECT_YCC = MENU_TEXT_YCC.get_rect(center=(640, 190))
-        GROUP_NUMNAME = get_font(50).render("Group: Vy Dang - s5245519", True, "White")
+        GROUP_NUMNAME = get_font(50).render("Group 12: Vy Dang - s5245519", True, "White")
         GROUP_RECT_NUMNAME = GROUP_NUMNAME.get_rect(center=(640, 250))
 
         PLAY_BUTTON = Button(button_surface, pos=(640, 350), text_input="PLAY", font=get_font(60), base_color="White",
@@ -184,8 +184,13 @@ def play():
 
     #titles
     title_tetris = get_font(80).render("Tetris", True, pygame.Color("darkorange"))
-    next_block = get_font(50).render("Next Block", True, pygame.Color("darkorange"))
-    title_score = get_font(60).render('Score', True, pygame.Color('green'))
+    next_block = get_font(45).render("Next Block", True, pygame.Color("darkorange"))
+    title_score = get_font(40).render('Score', True, pygame.Color('green'))
+    group_num = get_font(40).render('Group 12', True, pygame.Color('darkorange'))
+    level = get_font(40).render('Level: 1', True, pygame.Color('darkorange'))
+    game_mode = get_font(35).render('Game Mode: Normal', True, pygame.Color('darkorange'))
+    player_mode = get_font(35).render('Player Mode: Player', True, pygame.Color('darkorange'))
+
     game_over = get_font(80).render("Game Over", True, pygame.Color("darkorange"))
 
 
@@ -360,12 +365,16 @@ def play():
 
         #titles display
         sc.blit(title_tetris, (495, 20))
-        sc.blit(next_block, (470, 130))
-        sc.blit(title_score, (535, 600))
-        sc.blit(get_font(45).render(str(score), True, pygame.Color('white')), (570, 660))
+        sc.blit(next_block, (470, 110))
+        sc.blit(title_score, (535, 620))
+        sc.blit(get_font(45).render(str(score), True, pygame.Color('white')), (570, 670))
         lines_eliminated_text = get_font(40).render("Lines Eliminated", True, pygame.Color('Purple'))
-        sc.blit(lines_eliminated_text, (450, 330))
-        sc.blit(get_font(45).render(str(line_count), True, pygame.Color('white')), (570, 380))
+        sc.blit(lines_eliminated_text, (450, 310))
+        sc.blit(get_font(45).render(str(line_count), True, pygame.Color('white')), (570, 370))
+        sc.blit(group_num, (500, 420))
+        sc.blit(level, (500, 470))
+        sc.blit(game_mode, (440, 520))
+        sc.blit(player_mode, (440, 570))
 
         #game over
         game_is_over = False
