@@ -109,7 +109,6 @@ def configure_page():
         pygame.display.update()
 def score_page():
     SCREEN = pygame.display.set_mode((1280, 720))
-    score_screen = pygame.Surface((640, 680))
     pygame.display.set_caption("Score")
     top_scores = [
         ("Player 1", 1000),
@@ -197,7 +196,7 @@ def play():
 
     #score
     score, lines = 0, 0
-    scores = {0: 0, 1: 100, 2: 300, 3: 700, 4: 1500}
+    scores = {0: 0, 1: 100, 2: 300, 3: 600, 4: 1000}
 
     line_count = 0
 
